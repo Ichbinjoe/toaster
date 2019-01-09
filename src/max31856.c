@@ -13,6 +13,7 @@ int max31856_begin()
     bcm2835_spi_setBitOrder(BCM2835_SPI_BIT_ORDER_MSBFIRST);
     bcm2835_spi_setChipSelectPolarity(0, 0); // Active low
     bcm2835_spi_setChipSelectPolarity(1, 0); // Active low
+    bcm2835_spi_setDataMode(BCM2835_SPI_MODE0);
 
     return 1;
 }
@@ -44,12 +45,12 @@ float max31856_single2_to_host(void *a)
 
 int16_t max31856_double_to_host(void *a)
 {
-    uint16_t v = be16toh(*(uint16_t*)a);
-    if (v & 0x8000)
-        return (int16_t)(v & 0x7fff);
+    uint8_t* f = *(uint8_t*)a;
+    uint16_t v = ((uint16_t)f[0] & 0x7f << 8) + ((uint16_t)f[1]);
+    if (f[0] & 0x80)
+        return v;
     else
-        return -(int16_t)(v & 0x7fff);
-
+        return -v;
 }
 
 float max31856_double1_to_host(void *a)
@@ -64,12 +65,12 @@ float max31856_double2_to_host(void *a)
 
 float max31856_triple_to_host(void *a)
 {
-    uint32_t v = be32toh(*(uint32_t*)a);
-    int32_t q = (int32_t)(v & 0x7fffff);
-    if (!(v & 0x800000))
-        q = -q;
-
-    return ((float)q) / 4096;
+    uint8_t* f = *(uint8_t*)a;
+    uint32_t v = (((uint32_t)f[0] & 0x7f) << 16) + (((uint32_t)f[1]) << 8) + ((uint32_t)f[0]);
+    if (f[0] & 0x80)
+        return v;
+    else
+        return -v;
 }
 
 void host_to_max31856_single1(int8_t v, void *a)

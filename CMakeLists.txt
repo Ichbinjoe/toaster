@@ -9,7 +9,7 @@ function(find_and_link target library_name)
     target_link_libraries(${target} PRIVATE "${LIB${library_name}_PATH}")
 endfunction(find_and_link)
 
-add_library(toaster src/toaster.c src/toaster.c)
+add_library(toaster SHARED src/toaster.c src/toaster.c)
 target_include_directories(toaster PUBLIC include/)
 
 find_and_link(toaster bcm2835)
