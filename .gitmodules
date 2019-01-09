@@ -1,3 +1,6 @@
 [submodule "wiringPi"]
 	path = wiringPi
 	url = git://git.drogon.net/wiringPi
+[submodule "reflow/pid"]
+	path = reflow/pid
+	url = git@github.com:varhub/pid.git

@@ -90,6 +90,6 @@ class Toaster:
         
         sr = self.lt.toaster_read_temp(ctypes.c_int(thermo), ctypes.byref(val))
 
-        return (val, sr)
+        return val, sr
 
 T = Toaster(Lock())
