@@ -38,7 +38,7 @@ int toaster_init(uint8_t thermo1_mode, uint8_t thermo2_mode)
     if (!max31856_begin())
         return 0;
 
-    bcm2835_gpio_fsel(TOASTER_HEAT_ENABLE_GPIO_PIN, BCM2835_GPIO_FSEL_INPT);
+    bcm2835_gpio_fsel(TOASTER_HEAT_ENABLE_GPIO_PIN, BCM2835_GPIO_FSEL_OUTP);
 
     bcm2835_gpio_fsel(TOASTER_THERMO1_DRDY_GPIO_PIN, BCM2835_GPIO_FSEL_INPT);
     bcm2835_gpio_fsel(TOASTER_THERMO1_FAULT_GPIO_PIN, BCM2835_GPIO_FSEL_INPT);
