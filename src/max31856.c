@@ -45,12 +45,12 @@ float max31856_single2_to_host(void *a)
 
 int16_t max31856_double_to_host(void *a)
 {
-    uint8_t* f = *(uint8_t*)a;
+    uint8_t* f = (uint8_t*)a;
     uint16_t v = ((uint16_t)f[0] & 0x7f << 8) + ((uint16_t)f[1]);
     if (f[0] & 0x80)
         return v;
     else
-        return -v;
+        return -(int16_t)v;
 }
 
 float max31856_double1_to_host(void *a)
@@ -65,12 +65,12 @@ float max31856_double2_to_host(void *a)
 
 float max31856_triple_to_host(void *a)
 {
-    uint8_t* f = *(uint8_t*)a;
+    uint8_t* f = (uint8_t*)a;
     uint32_t v = (((uint32_t)f[0] & 0x7f) << 16) + (((uint32_t)f[1]) << 8) + ((uint32_t)f[0]);
     if (f[0] & 0x80)
-        return v;
+        return ((float)v)/4096;
     else
-        return -v;
+        return -((float)v)/4096;
 }
 
 void host_to_max31856_single1(int8_t v, void *a)
