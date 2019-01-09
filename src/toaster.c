@@ -4,8 +4,33 @@
 
 #include "max31856.h"
 
+void setup_thermo(uint8_t cs, uint8_t mode)
+{
+    // so i'm lazy and am just going to set the thermocouples into constant poll mode
+    struct {
+        uint8_t addr;
+        struct max31856_cr0 cr0;
+        struct max31856_cr1 cr1;
+        struct max31856_mask mask;
+    } query = {
+            0x80 + MAX31856_CR0_ADDR,
+            {1, // cmode
+             0, // oneshot
+             OCFAULT_ENABLED_LOWR, // ocfault2
+             0, // cj
+             0, // fault
+             1, // faultclr
+             0}, // Reject 60Hz
+            {0, // reserved
+             AVGSEL_16_SAMPLE, // avgsel
+             mode // tc_type
+            }
+    };
 
-int toaster_init()
+    max31856_transfer(cs, &query, sizeof(query));
+}
+
+int toaster_init(uint8_t thermo1_mode, uint8_t thermo2_mode)
 {
     if (!bcm2835_init())
         return 0;
@@ -30,15 +55,8 @@ int toaster_init()
     // we are targeting 200Hz for the servo
     bcm2835_pwm_set_range(TOASTER_SERVO_PWM_CHANNEL, 188);
 
-    // so i'm lazy and am just going to set the thermocouples into constant poll mode
-    struct {
-        uint8_t addr;
-        struct max31856_cr0 cr0;
-        struct max31856_cr1 cr1;
-        struct max31856_mask mask;
-    } query = {
-            0x80 + MAX31856_CR()
-    };
+    setup_thermo(0, thermo1_mode);
+    setup_thermo(1, thermo2_mode);
 
     return 1;
 }
